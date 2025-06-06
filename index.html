@@ -149,7 +149,6 @@
         loadingCover.style.display = "block";
         
         let gameInstance = null;
-        const sdkInitialized = true; // Имитация инициализации SDK
 
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
             container.className = "unity-mobile";
@@ -167,16 +166,7 @@
         window.addEventListener('pointerdown', focusGame);
         window.addEventListener('touchstart', focusGame);
 
-        // Обработка видимости страницы
-        document.addEventListener('visibilitychange', function() {
-            if (gameInstance && typeof gameInstance.SendMessage === "function") {
-                if (document.hidden) {
-                    gameInstance.SendMessage('YG2Instance', 'SetFocusWindowGame', 'false');
-                } else {
-                    gameInstance.SendMessage('YG2Instance', 'SetFocusWindowGame', 'true');
-                }
-            }
-        });
+        // Чистый запуск: убраны все сторонние интеграции
 
         // Загрузка Unity
         const script = document.createElement("script");
@@ -189,12 +179,6 @@
             }).then((unityInstance) => {
                 gameInstance = unityInstance;
                 loadingCover.style.display = "none";
-                
-                // Сообщаем Unity, что всё готово
-                if (typeof gameInstance.SendMessage === "function") {
-                    gameInstance.SendMessage('YG2Instance', 'InitSDKComplete');
-                    setTimeout(() => gameInstance.SendMessage('YG2Instance', 'InitGame'), 100);
-                }
             }).catch((message) => {
                 console.error("Unity initialization error:", message);
             });
